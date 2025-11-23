@@ -1,66 +1,68 @@
-# impressora-elgin-final
+# Sistema de Impressão com Impressora Elgin
 
-## Menu Impressora
+Este sistema demonstra como integrar Java com impressoras térmicas utilizando **JNA (Java Native Access)** para acessar funções presentes na DLL `E1_Impressora01.dll`. O programa oferece um menu interativo que permite configurar a impressora, abrir conexão, imprimir diferentes tipos de dados e utilizar comandos auxiliares.
 
-O sistema permite a configuração e controle de uma impressora através de comandos que interagem com a DLL específica para a impressora. Abaixo estão listadas as funcionalidades disponíveis no menu:
+## Menu e Funções Utilizadas
 
-### Funcionalidades
-
-1. **Configurar Conexão**:  
-   Chama `ConfigurarConexao()`.  
-   Esta função solicita ao usuário o tipo de conexão, o modelo da impressora e o método de conexão (USB, RS232, etc.). Configura a impressora com essas informações.
-
-2. **Abrir Conexão**:  
-   Chama `AbrirConexao()`.  
-   A função tenta abrir a conexão com a impressora usando os parâmetros configurados anteriormente (tipo, modelo e conexão).
-
-3. **Impressão Texto**:  
-   Chama `ImpressaoTexto(dados, posicao, estilo, tamanho)`.  
-   Solicita um texto para impressão e configura o posicionamento, estilo e tamanho do texto a ser impresso.
-
-4. **Impressão QRCode**:  
-   Chama `ImpressaoQRCode(dados, tamanho, nivelCorrecao)`.  
-   Solicita ao usuário o conteúdo do QR Code, o tamanho e o nível de correção antes de enviá-lo para impressão.
-
-5. **Impressão Código de Barras**:  
-   Chama `ImpressaoCodigoBarras(tipo, dados, altura, largura, HRI)`.  
-   Solicita o código de barras, o tipo de código, altura, largura e o HRI (Human Readable Interpretation) para gerar e imprimir o código de barras.
-
-6. **Impressão XML SAT**:  
-   Chama `ImprimeXMLSAT(xml, param)`.  
-   Abre um `JFileChooser` para selecionar um arquivo XML, lê o arquivo e envia para impressão.
-
-7. **Impressão XML Cancelamento SAT**:  
-   Chama `ImprimeXMLCancelamentoSAT(xml, assQRCode, param)`.  
-   Abre um `JFileChooser` para selecionar o arquivo XML de cancelamento, solicita ao usuário a assinatura do QR Code, e então envia os dados para a impressora.
-
-8. **Abrir Gaveta Elgin**:  
-   Chama `AbreGavetaElgin()`.  
-   Abre a gaveta de dinheiro Elgin conectada à impressora.
-
-9. **Abrir Gaveta (manual)**:  
-   Chama `AbreGaveta(pin, ti, tf)`.  
-   Solicita ao usuário o pino de controle, o tempo inicial e final para abrir a gaveta manualmente.
-
-10. **Sinal Sonoro**:  
-    Chama `SinalSonoro(qtd, t1, t2)`.  
-    Solicita ao usuário a quantidade de bipes (qtd), tempo de início e tempo de fim para emitir um sinal sonoro.
-
-11. **Fechar Conexão e Sair**:  
-    Chama `FecharConexao()`.  
-    Fecha a conexão com a impressora e encerra o sistema, saindo do loop de opções.
+O sistema utiliza a interface `ImpressoraDLL`, que espelha as funções da DLL e permite acesso direto às operações da impressora. Abaixo estão listadas as funções utilizadas no sistema, agrupadas pela funcionalidade correspondente ao menu.
 
 ---
 
-## Como Usar
+### Conexão (Menu: 1 e 2)
 
-1. Execute o programa.
-2. O menu será exibido com as opções numeradas.
-3. Digite o número da opção desejada para executar a função correspondente.
-4. O programa continuará em execução até que a opção de fechar a conexão e sair seja escolhida.
+* `AbreConexaoImpressora(int tipo, String modelo, String conexao, int param)`
+  Abre a comunicação com a impressora, permitindo que os comandos seguintes sejam executados. Os parâmetros definem o tipo de conexão (USB, Serial, TCP/IP etc.) e o modelo da impressora.
 
-### Observações
-- Certifique-se de que a impressora esteja corretamente conectada antes de abrir a conexão e executar as operações.
-- Alguns comandos podem necessitar de parâmetros adicionais, como arquivos XML ou dados para impressão.
-- A função de "Abrir Gaveta" depende da impressora estar equipada com gaveta e de a conexão estar ativa.
+* `FechaConexaoImpressora()`
+  Encerra a comunicação com a impressora, liberando recursos e finalizando o uso da DLL.
+
 ---
+
+### Impressão de Conteúdos (Menu: 3, 4, 5)
+
+* `ImpressaoTexto(String dados, int posicao, int estilo, int tamanho)`
+  Realiza a impressão de um texto simples, permitindo definir alinhamento, estilo e tamanho da fonte. Ideal para cabeçalhos, informações gerais e testes.
+
+* `ImpressaoQRCode(String dados, int tamanho, int nivelCorrecao)`
+  Gera e imprime um QR Code baseado no conteúdo informado. Os parâmetros controlam o tamanho do código e o nível de correção de erro.
+
+* `ImpressaoCodigoBarras(int tipo, String dados, int altura, int largura, int HRI)`
+  Imprime um código de barras no padrão especificado. Permite controlar altura, espessura e exibição de texto legível abaixo do código.
+
+* `AvancaPapel(int linhas)`
+  Avança o papel em um número definido de linhas, garantindo espaçamento após a impressão ou preparando o papel para corte.
+
+---
+
+### Impressão de XML SAT (Menu: 6 e 7)
+
+* `ImprimeXMLSAT(String dados, int param)`
+  Realiza a impressão estruturada de um arquivo XML SAT, interpretando o documento fiscal e formatando-o conforme o padrão exigido pelo varejo.
+
+* `ImprimeXMLCancelamentoSAT(String dados, String assQRCode, int param)`
+  Imprime o XML de cancelamento SAT, incluindo a assinatura necessária para validação do QR Code.
+
+* `Corte(int avanco)`
+  Executa o corte parcial ou total do papel, dependendo da configuração da impressora, geralmente após a finalização de um documento fiscal.
+
+---
+
+### Sinal Sonoro e Gaveta (Menu: 8, 9 e 10)
+
+* `AbreGavetaElgin()`
+  Envia o comando padrão da Elgin para abertura da gaveta de dinheiro acoplada à impressora.
+
+* `AbreGaveta(int pino, int ti, int tf)`
+  Permite abertura de gavetas genéricas, escolhendo o pino elétrico e tempos de pulso de ativação.
+
+* `SinalSonoro(int qtd, int tempoInicio, int tempoFim)`
+  Emite sinais sonoros na impressora, usados para indicar fim de impressão ou alertas no sistema.
+
+---
+
+## Requisitos Importantes
+
+* A DLL **deve estar no mesmo diretório** da aplicação.
+* Java precisa permitir carregamento de bibliotecas nativas.
+* Arquivos `XMLSAT.xml` e `CANC_SAT.xml` devem existir na pasta do projeto.
+* Drivers da impressora devem estar instalados quando necessário.
