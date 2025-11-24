@@ -6,6 +6,24 @@ Este sistema demonstra como integrar Java com impressoras térmicas utilizando *
 
 O sistema utiliza a interface `ImpressoraDLL`, que espelha as funções da DLL e permite acesso direto às operações da impressora. Abaixo estão listadas as funções utilizadas no sistema, agrupadas pela funcionalidade correspondente ao menu.
 
+```java
+            System.out.println("\n*************************************************");
+            System.out.println("**************** MENU IMPRESSORA *******************");
+            System.out.println("*************************************************\n");
+
+            System.out.println("1  - Configurar Conexao");
+            System.out.println("2  - Abrir Conexao");
+            System.out.println("3  - Impressao Texto");
+            System.out.println("4  - Impressao QRCode");
+            System.out.println("5  - Impressao Cod Barras");
+            System.out.println("6  - Impressao XML SAT");
+            System.out.println("7  - Impressao XML Canc SAT");
+            System.out.println("8  - Abrir Gaveta Elgin");
+            System.out.println("9  - Abrir Gaveta");
+            System.out.println("10 - Sinal Sonoro");
+            System.out.println("0  - Fechar Conexao e Sair");
+            System.out.println("--------------------------------------");
+```
 ---
 
 ### Conexão (Menu: 1 e 2)
